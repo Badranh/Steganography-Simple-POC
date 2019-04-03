@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Private</title>
+		<style>
+			body, html {
+				margin:0;
+				padding:0;
+				font-family:Arial,sans-serif;
+				color:#000;
+			}
+			h1 {
+				color:black;
+				margin-bottom:10px;
+			}
+			#main {
+				position:relative;
+				width:940px;
+				padding:20px;
+				margin:auto;
+			}
+			#right {
+				position:relative;
+				float:left;
+				margin: 10px;
+				width:600px;
+				vertical-align:top;
+			}
+			#left {
+				position:relative;
+				float:left;
+				width:260px;
+				padding:10px;
+				margin-right:10px;
+			}
+			.half {
+				position:relative;
+				display:inline-block;
+				width:49%;
+			}
+			#original {
+				vertical-align:top;
+			}
+			#messageArea {
+				width:100%;
+			}
+			#img, #cover {
+				width:290px;
+			}
+			.btns {
+				margin-top:15px;
+				margin-bottom:10px;
+				padding: 0 40px;
+			}
+			.btn {
+				padding:10px 20px 10px 20px;
+				border-radius:0px;
+				border:2px solid #000000;
+				cursor:pointer;
+				color:#000000;
+				background-color:white;
+				width:200px;
+				text-align:center;
+			}
+			.btn:hover {
+				color:white;
+				background-color:#000000;
+			}
+			#download {
+				position:absolute;
+				top:47px;
+				left:4px;
+				padding:10px 5px 5px 3px;
+				width:10px;
+				border-top:1px solid black;
+				-moz-border-radius:0 0 15px 15px;
+				-o-border-radius:0 0 15px 15px;
+				-webkit-border-radius:0 0 15px 15px;
+				border-radius:0 0 15px 15px;
+				text-decoration:none;
+			}
+			#download:hover {
+				width:70px;
+			}
+			#download:hover:after {
+				content:"ownload";
+			}
+			#description {
+				line-height:25px;
+				padding-bottom:5px;
+				border-bottom:1px solid lightgrey;
+			}
+			#capacity {
+				font-weight:normal;
+				font-size:15px;
+				margin-left:10px;
+				vertical-align:middle;
+			}
+			.note {
+				font-size:9px;
+				text-align:center;
+				color:black;
+			}
+			.invisible {
+				visibility:hidden;
+			}
+			.clear {
+				clear:both;
+			}
+			.footer {
+				margin-top:25px;
+				width:100%;
+				text-align:right;
+			}
+			textarea{
+				width:100%;
+				padding:10px;
+				height:200px;
+				resize:none;
+			}
+			h2{
+				margin-top:0;
+				color: red;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="main">
+			<h1>Tool Dev by hasan badran with the help of some online open source repo, I'll credit it after I find it again...</h1>
+		</div>
+			<div>
+				<center><h1>Image:</h1>
+
+				<input id="file" type="file"/><br/>
+				<br>
+				<br>
+				<h2>Code:<span id="capacity"></span></h2>
+				<br>
+				<br>
+				<textarea id="text">alert('prosec');</textarea>
+				<div class="btns">
+					<span id="hide" class="btn">Run The Exploit</span><br><br><br>
+					<span id="read" class="btn">Decode</span>
+				</div>
+				</center>
+			</div>
+			<br>
+			<br>
+			<br>
+			<div>
+				<center>
+				<div id="original" class="half">
+					<h1>Innocent Image:</h1>
+					<img id="img" src="inocent.png"/>
+				</div>
+				<div id="stego" class="half">
+					<h1>Malicous Image:</h1>
+					<img id="cover" src=""/>
+				
+				</div>
+				<div id="messageArea" class="invisible">
+					<h1>Message:</h1>
+					<div id="message"></div>
+				</div>
+			</div>
+			<div class="clear"></div>
+			</center>
+
+		</div>
+		<script type="text/javascript" src="./build/steganography.js"></script>
+		<script type="text/javascript">
+
+		function handleFileSelect(evt) {
+			var original = document.getElementById("original"),
+				stego = document.getElementById("stego"),
+				img = document.getElementById("img"),
+				cover = document.getElementById("cover"),
+				message = document.getElementById("message");
+			if(!original || !stego) return;
+
+			var files = evt.target.files; // FileList object
+
+			// Loop through the FileList and render image files as thumbnails.
+			for (var i = 0, f; f = files[i]; i++) {
+
+				// Only process image files.
+				if (!f.type.match('image.*')) {
+					continue;
+				}
+
+				var reader = new FileReader();
+
+				// Closure to capture the file information.
+				reader.onload = (function(theFile) {
+					return function(e) {
+						img.src = e.target.result;
+						img.title = escape(theFile.name);
+						stego.className = "half invisible";
+						cover.src = "";
+						message.innerHTML="";
+						message.parentNode.className="invisible";
+						updateCapacity();
+					};
+				})(f);
+
+				// Read in the image file as a data URL.
+				reader.readAsDataURL(f);
+			}
+		}
+
+		function hide() {
+			var stego = document.getElementById("stego"),
+				img = document.getElementById("img"),
+				cover = document.getElementById("cover"),
+				message = document.getElementById("message"),
+				textarea = document.getElementById("text"),
+				download = document.getElementById("download");
+			if(img && textarea) {
+				cover.src = steg.encode(textarea.value, img);
+				stego.className = "half";
+				message.innerHTML="";
+				message.parentNode.className="invisible";
+				download.href=cover.src.replace("image/png", "image/octet-stream");
+			}
+		}
+
+		function read() {
+			var img = document.getElementById("img"),
+				cover = document.getElementById("cover"),
+				message = document.getElementById("message"),
+				textarea = document.getElementById("text");
+			if(img && textarea) {
+				message.innerHTML = steg.decode(img);
+				if(message.innerHTML !== "") {
+					message.parentNode.className="";
+					textarea.value = message.innerHTML;
+					updateCapacity();
+				}
+			}
+		}
+
+		function updateCapacity() {
+			var img = document.getElementById('img'),
+				textarea = document.getElementById('text');
+			if(img && text)
+				document.getElementById('capacity').innerHTML='('+textarea.value.length + '/' + steg.getHidingCapacity(img) +' chars)';
+		}
+
+		window.onload = function(){
+			document.getElementById('file').addEventListener('change', handleFileSelect, false);
+			document.getElementById('hide').addEventListener('click', hide, false);
+			document.getElementById('read').addEventListener('click', read, false);
+			document.getElementById('text').addEventListener('keyup', updateCapacity, false);
+			hide();
+			updateCapacity();
+		};
+		</script>
+	</body>
+</html>
